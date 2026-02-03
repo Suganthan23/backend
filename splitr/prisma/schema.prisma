@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  groupsCreated Group[]      @relation("CreatedBy")
+  memberships  GroupMember[]
+  expensesPaid   Expense[]      @relation("PaidBy")
+  expenseSplits  ExpenseSplit[]
+}
+
+model Group {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  createdId Int
+  creator User  @relation("CreatedBy",fields: [createdId], references: [id])
+  members GroupMember[]
+  expenses       Expense[]
+}
+
+model GroupMember {
+  id        Int      @id @default(autoincrement())
+  groupId   Int
+  userId    Int
+  createdAt DateTime @default(now())
+  group Group @relation(fields: [groupId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([groupId, userId])
+}
+
+model Expense {
+  id        Int      @id @default(autoincrement())
+  amount    Float
+  description String
+  category  String    @default("General")
+  date      DateTime  @default(now())
+  groupId   Int
+  group Group @relation(fields: [groupId], references: [id])
+  paidById  Int
+  paidBy User @relation("PaidBy", fields: [paidById], references: [id])
+  splits ExpenseSplit[]
+}
+
+model ExpenseSplit {
+  id        Int      @id @default(autoincrement())
+  amount    Float
+  expenseId Int
+  expense Expense @relation(fields: [expenseId], references: [id])
+  userId    Int
+  user User @relation(fields: [userId], references: [id])
+}
