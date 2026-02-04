@@ -21,7 +21,8 @@ A collection of advanced backend systems demonstrating core engineering concepts
 🛠️ How to Run
 
   Each project is self-contained. Navigate to the project folder and follow the instructions.
-    *cd vault
-    npm install
-    npx prisma migrate dev
-    npm run dev*
+  
+       cd vault
+       npm install
+       npx prisma migrate dev
+       npm run dev
