@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AuctionItem {
+  id           Int      @id @default(autoincrement())
+  name         String
+  currentPrice Decimal  @default(0.00)
+  
+  version      Int      @default(1) 
+
+  createdAt    DateTime @default(now())
+  bids         Bid[]
+}
+
+model Bid {
+  id        Int         @id @default(autoincrement())
+  amount    Decimal
+  itemId    Int
+  item      AuctionItem @relation(fields: [itemId], references: [id])
+  username  String      
+  createdAt DateTime    @default(now())
+}
